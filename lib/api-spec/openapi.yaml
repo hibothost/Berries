@@ -3,13 +3,19 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Berries meme coin API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: waitlist
+    description: Email waitlist operations
+  - name: wallet
+    description: Wallet operations
+  - name: stats
+    description: Coin stats and summary
 paths:
   /healthz:
     get:
@@ -24,6 +30,86 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /waitlist:
+    post:
+      operationId: joinWaitlist
+      tags: [waitlist]
+      summary: Join the email waitlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WaitlistEntry"
+      responses:
+        "201":
+          description: Joined waitlist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WaitlistMember"
+        "409":
+          description: Already on waitlist
+
+  /waitlist/count:
+    get:
+      operationId: getWaitlistCount
+      tags: [waitlist]
+      summary: Get the number of waitlist members
+      responses:
+        "200":
+          description: Count
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WaitlistCount"
+
+  /wallets:
+    post:
+      operationId: connectWallet
+      tags: [wallet]
+      summary: Register a connected wallet address for the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WalletInput"
+      responses:
+        "201":
+          description: Wallet registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Wallet"
+    get:
+      operationId: getUserWallets
+      tags: [wallet]
+      summary: Get wallets connected by the current user
+      responses:
+        "200":
+          description: List of wallets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Wallet"
+
+  /stats:
+    get:
+      operationId: getCoinStats
+      tags: [stats]
+      summary: Get Berries coin statistics and summary
+      responses:
+        "200":
+          description: Coin stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CoinStats"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +120,70 @@ components:
       required:
         - status
 
+    WaitlistEntry:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+
+    WaitlistMember:
+      type: object
+      required: [id, email, createdAt]
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    WaitlistCount:
+      type: object
+      required: [count]
+      properties:
+        count:
+          type: integer
+
+    WalletInput:
+      type: object
+      required: [address, provider]
+      properties:
+        address:
+          type: string
+        provider:
+          type: string
+
+    Wallet:
+      type: object
+      required: [id, address, provider, userId, createdAt]
+      properties:
+        id:
+          type: integer
+        address:
+          type: string
+        provider:
+          type: string
+        userId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    CoinStats:
+      type: object
+      required: [totalHolders, totalWallets, waitlistCount, roadmapProgress]
+      properties:
+        totalHolders:
+          type: integer
+        totalWallets:
+          type: integer
+        waitlistCount:
+          type: integer
+        roadmapProgress:
+          type: integer
+          description: Percentage (0-100) of roadmap completed
+        currentPhase:
+          type: string

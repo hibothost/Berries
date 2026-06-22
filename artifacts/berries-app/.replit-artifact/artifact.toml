@@ -1,0 +1,27 @@
+kind = "mobile"
+previewPath = "/berries-app/"
+title = "Berries App"
+version = "1.0.0"
+id = "artifacts/berries-app"
+router = "expo-domain"
+
+[[integratedSkills]]
+name = "expo"
+version = "1.0.0"
+
+[[services]]
+ensurePreviewReachable = "/status"
+name = "expo"
+paths = [ "/berries-app/" ]
+localPort = 23550
+
+[services.development]
+run = "pnpm --filter @workspace/berries-app run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/berries-app", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/berries-app", "run", "serve" ]
+
+[services.env]
+PORT = "23550"
+BASE_PATH = "/berries-app/"

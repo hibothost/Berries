@@ -1,0 +1,14 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "KFST2MuuPdn1WdyqORZyP"
+uri = "file://artifacts/berries-web/src/assets/hero-berry.png"
+type = "image"
+title = "Vivid cartoon berry character"
+
+[[generated]]
+id = "j5gtXOV5HHiabouM2dK7x"
+uri = "file://artifacts/berries-app/assets/images/icon.png"
+type = "image"
+title = "berries coin icon"
